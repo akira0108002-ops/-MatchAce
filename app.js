@@ -252,3 +252,60 @@ html+=`
 screen.innerHTML=html;
 
 }
+function renderMatchScreen(courts){
+
+    let html = "<h2>🏸 試合中</h2>";
+
+    courts.forEach((court,index)=>{
+
+        html += `
+        <div class="card">
+
+            <h3>コート ${String.fromCharCode(65+index)}</h3>
+
+            <div class="team">
+                ${court.a1.name}<br>
+                ${court.a2.name}
+            </div>
+
+            <div class="score-row">
+
+                <button onclick="changeScore(${index},1,-1)">－</button>
+
+                <span id="scoreA${index}">0</span>
+
+                <button onclick="changeScore(${index},1,1)">＋</button>
+
+            </div>
+
+            <hr>
+
+            <div class="team">
+                ${court.b1.name}<br>
+                ${court.b2.name}
+            </div>
+
+            <div class="score-row">
+
+                <button onclick="changeScore(${index},2,-1)">－</button>
+
+                <span id="scoreB${index}">0</span>
+
+                <button onclick="changeScore(${index},2,1)">＋</button>
+
+            </div>
+
+        </div>
+        `;
+
+    });
+
+    html += `
+    <button onclick="finishMatches()">
+        試合終了
+    </button>
+    `;
+
+    screen.innerHTML = html;
+
+}
