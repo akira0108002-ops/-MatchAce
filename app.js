@@ -21,6 +21,8 @@ function uid() {
     return Date.now().toString() + Math.random().toString(36).substring(2,8);
 }
 
+const screen = document.getElementById("screen");
+
 window.onload = () => {
     renderHome();
 };
