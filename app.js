@@ -12,45 +12,58 @@ function renderHome(){
 
 screen.innerHTML=`
 
-<div class="card glass fade">
+<div class="card">
 
-<h2>👥 プレイヤー登録</h2>
+<h2>👥 プレイヤー管理</h2>
 
-<input id="name" placeholder="名前">
+<input id="name" placeholder="プレイヤー名">
 
 <select id="exp">
 
-<option value="1500">🏸経験者</option>
+<option value="1500">🏸 経験者</option>
 
-<option value="1000">🔰初心者</option>
+<option value="1000">🔰 初心者</option>
 
 </select>
 
-<button onclick="addPlayer()">
+<button class="primary" onclick="addPlayer()">
 
-追加
+＋ プレイヤー追加
 
 </button>
 
 </div>
 
-<div class="card glass fade">
+<div class="card">
 
-<h2>📋 本日の参加者</h2>
+<h2>
+
+📋 本日の参加者
+
+(${players.filter(p=>p.present).length}人)
+
+</h2>
 
 <div id="playerList"></div>
 
 </div>
 
-<div class="card glass fade">
+<div class="card">
 
-<h2>🏸 コート数</h2>
+<h2>🏸 コート設定</h2>
 
-<input id="courtCount" type="number" value="1" min="1" max="10">
+<input
+id="courtCount"
+type="number"
+min="1"
+max="8"
+value="1">
 
-<button onclick="goMatch()">
+<button
+class="primary"
+onclick="goMatch()">
 
-マッチメイク開始
+AIマッチメイク開始
 
 </button>
 
@@ -112,35 +125,36 @@ players.forEach((p,index)=>{
 
 list.innerHTML+=`
 
-<div class="player-card">
+<div class="player">
 
 <div>
 
-<b>${p.name}</b><br>
+<div class="player-name">
+
+${p.present?"🟢":"⚪️"}
+
+${p.name}
+
+</div>
+
+<div class="player-rate">
 
 ⭐ ${Math.round(p.rate)}
-<br>
-🏆 ${p.win}勝 ${p.lose}敗
+
+　🏆 ${p.win}勝
+
+　❌ ${p.lose}敗
+
+</div>
 
 </div>
 
 <div>
 
-<label>
-
 <input
-
 type="checkbox"
-
 ${p.present?"checked":""}
-
-onchange="togglePresent(${index})"
-
->
-
-参加
-
-</label>
+onchange="togglePresent(${index})">
 
 </div>
 
@@ -377,3 +391,34 @@ function finishMatches(){
     renderHome();
 
 }
+
+function editPlayer(index){
+
+    const player = players[index];
+
+    const newName = prompt("名前を変更", player.name);
+
+    if(newName===null) return;
+
+    if(newName.trim()==="") return;
+
+    player.name = newName.trim();
+
+    savePlayers();
+
+    renderHome();
+
+}
+
+function deletePlayer(index){
+
+    if(!confirm(players[index].name+" を削除しますか？")) return;
+
+    players.splice(index,1);
+
+    savePlayers();
+
+    renderHome();
+
+}
+
