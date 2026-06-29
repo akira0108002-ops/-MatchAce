@@ -160,7 +160,25 @@ savePlayers();
 
 function goMatch(){
 
-alert("次回ここにAIマッチメイクを追加します");
+const courtCount=parseInt(document.getElementById("courtCount").value);
+
+const result=createMatches(players,courtCount);
+
+console.log(result);
+
+alert(
+
+result.courts.length+
+
+"コート作成\n待機 "
+
++
+
+result.wait.length+
+
+"人"
+
+);
 
 }
 
