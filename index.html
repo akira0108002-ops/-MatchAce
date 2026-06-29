@@ -1,39 +1,95 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<meta name="viewport"
+content="width=device-width,
+initial-scale=1,
+viewport-fit=cover">
+
 <title>MatchAce</title>
 
-<link rel="manifest" href="manifest.json">
+<link rel="manifest"
+href="manifest.json">
 
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet"
+href="style.css">
+
 </head>
 
 <body>
 
 <div id="app">
 
-<header class="header">
-<h1>🏸 MatchAce</h1>
-<p>AI バドミントン マッチメイク</p>
+<header class="topbar">
+
+<div class="logo">
+
+🏸 MatchAce
+
+</div>
+
+<div class="subtitle">
+
+AI Match Making
+
+</div>
+
 </header>
 
 <main id="screen">
 
 </main>
 
-<nav class="bottom-nav">
-<button id="homeBtn">ホーム</button>
-<button id="matchBtn">試合</button>
-<button id="rankBtn">ランキング</button>
-<button id="settingBtn">設定</button>
+<nav class="tabbar">
+
+<button id="tabHome">
+
+🏠<br>
+
+ホーム
+
+</button>
+
+<button id="tabMatch">
+
+🏸<br>
+
+試合
+
+</button>
+
+<button id="tabRank">
+
+🏆<br>
+
+ランキング
+
+</button>
+
+<button id="tabSetting">
+
+⚙️<br>
+
+設定
+
+</button>
+
 </nav>
 
 </div>
 
 <script src="rating.js"></script>
+
+<script src="history.js"></script>
+
 <script src="matchmaking.js"></script>
+
 <script src="app.js"></script>
+
 </body>
+
 </html>
