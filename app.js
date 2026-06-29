@@ -183,3 +183,72 @@ result.wait.length+
 }
 
 renderHome();
+function renderCourts(result){
+
+let html="";
+
+result.courts.forEach((court,index)=>{
+
+html+=`
+
+<div class="card">
+
+<h2>🏸 コート ${String.fromCharCode(65+index)}</h2>
+
+<div style="text-align:center;font-size:22px;font-weight:bold;margin:15px 0;">
+
+${court.a1.name}<br>
+
+${court.a2.name}
+
+</div>
+
+<div style="text-align:center;font-size:28px;color:#0A84FF;">
+
+VS
+
+</div>
+
+<div style="text-align:center;font-size:22px;font-weight:bold;margin:15px 0;">
+
+${court.b1.name}<br>
+
+${court.b2.name}
+
+</div>
+
+</div>
+
+`;
+
+});
+
+if(result.wait.length){
+
+html+=`
+
+<div class="card">
+
+<h2>🪑 待機</h2>
+
+${result.wait.map(p=>p.name).join("<br>")}
+
+</div>
+
+`;
+
+}
+
+html+=`
+
+<button onclick="renderHome()">
+
+ホームへ戻る
+
+</button>
+
+`;
+
+screen.innerHTML=html;
+
+}
