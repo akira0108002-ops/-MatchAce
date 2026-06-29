@@ -1,34 +1,57 @@
-const STORAGE_KEY = "matchace_players";
+// =======================================
+// MatchAce v2.0
+// app.js Part1
+// =======================================
+
+const STORAGE_KEY = "matchace_players_v2";
 
 let players = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+let currentMatches = [];
+let currentScreen = "home";
 
-function savePlayers(){
+function savePlayers() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(players));
 }
 
-const screen = document.getElementById("screen");
+function $(id) {
+    return document.getElementById(id);
+}
 
-function renderHome(){
+function uid() {
+    return Date.now().toString() + Math.random().toString(36).substring(2,8);
+}
 
-screen.innerHTML=`
+window.onload = () => {
+    renderHome();
+};
+
+function renderHome() {
+
+    currentScreen = "home";
+
+    screen.innerHTML = `
 
 <div class="card">
 
-<h2>👥 プレイヤー管理</h2>
+<h2>👥 プレイヤー登録</h2>
 
-<input id="name" placeholder="プレイヤー名">
+<input
+id="playerName"
+placeholder="名前">
 
-<select id="exp">
+<select id="playerRate">
 
-<option value="1500">🏸 経験者</option>
+<option value="1500">🏸経験者</option>
 
-<option value="1000">🔰 初心者</option>
+<option value="1000">🔰初心者</option>
 
 </select>
 
-<button class="primary" onclick="addPlayer()">
+<button
+class="primary"
+onclick="addPlayer()">
 
-＋ プレイヤー追加
+プレイヤー追加
 
 </button>
 
@@ -38,32 +61,38 @@ screen.innerHTML=`
 
 <h2>
 
-📋 本日の参加者
+参加メンバー
 
-(${players.filter(p=>p.present).length}人)
+(${players.filter(p=>p.present).length})
 
 </h2>
 
-<div id="playerList"></div>
+<div id="playerList">
+
+</div>
 
 </div>
 
 <div class="card">
 
-<h2>🏸 コート設定</h2>
+<h2>
+
+コート数
+
+</h2>
 
 <input
-id="courtCount"
 type="number"
+id="courtCount"
 min="1"
 max="8"
 value="1">
 
 <button
 class="primary"
-onclick="goMatch()">
+onclick="startMatchMaking()">
 
-AIマッチメイク開始
+AIマッチメイク
 
 </button>
 
@@ -71,59 +100,19 @@ AIマッチメイク開始
 
 `;
 
-drawPlayers();
+    renderPlayerList();
 
 }
 
-function addPlayer(){
+function renderPlayerList(){
 
-const name=document.getElementById("name").value.trim();
+    const list = $("playerList");
 
-const rate=parseInt(document.getElementById("exp").value);
+    list.innerHTML = "";
 
-if(name===""){
+    players.forEach((player,index)=>{
 
-alert("名前を入力してください");
-
-return;
-
-}
-
-players.push({
-
-id:Date.now(),
-
-name,
-
-rate,
-
-present:true,
-
-played:0,
-
-win:0,
-
-lose:0,
-
-rest:0
-
-});
-
-savePlayers();
-
-renderHome();
-
-}
-
-function drawPlayers(){
-
-const list=document.getElementById("playerList");
-
-list.innerHTML="";
-
-players.forEach((p,index)=>{
-
-list.innerHTML+=`
+        list.innerHTML += `
 
 <div class="player">
 
@@ -131,19 +120,27 @@ list.innerHTML+=`
 
 <div class="player-name">
 
-${p.present?"🟢":"⚪️"}
+${player.present ? "🟢":"⚪️"}
 
-${p.name}
+${player.name}
 
 </div>
 
 <div class="player-rate">
 
-⭐ ${Math.round(p.rate)}
+⭐ ${Math.round(player.rate)}
 
-　🏆 ${p.win}勝
+　
 
-　❌ ${p.lose}敗
+🏆 ${player.win}
+
+勝
+
+　
+
+❌ ${player.lose}
+
+敗
 
 </div>
 
@@ -153,7 +150,9 @@ ${p.name}
 
 <input
 type="checkbox"
-${p.present?"checked":""}
+
+${player.present?"checked":""}
+
 onchange="togglePresent(${index})">
 
 </div>
@@ -162,247 +161,76 @@ onchange="togglePresent(${index})">
 
 `;
 
-});
-
-}
-
-function togglePresent(i){
-
-players[i].present=!players[i].present;
-
-savePlayers();
-
-}
-
-function goMatch(){
-
-    const courtCount = parseInt(
-        document.getElementById("courtCount").value
-    );
-
-    const result = createMatches(players, courtCount);
-
-    currentCourts = result.courts;
-
-    renderMatchScreen(currentCourts);
-
-}
-
-renderHome();
-function renderCourts(result){
-
-let html="";
-
-result.courts.forEach((court,index)=>{
-
-html+=`
-
-<div class="card">
-
-<h2>🏸 コート ${String.fromCharCode(65+index)}</h2>
-
-<div style="text-align:center;font-size:22px;font-weight:bold;margin:15px 0;">
-
-${court.a1.name}<br>
-
-${court.a2.name}
-
-</div>
-
-<div style="text-align:center;font-size:28px;color:#0A84FF;">
-
-VS
-
-</div>
-
-<div style="text-align:center;font-size:22px;font-weight:bold;margin:15px 0;">
-
-${court.b1.name}<br>
-
-${court.b2.name}
-
-</div>
-
-</div>
-
-`;
-
-});
-
-if(result.wait.length){
-
-html+=`
-
-<div class="card">
-
-<h2>🪑 待機</h2>
-
-${result.wait.map(p=>p.name).join("<br>")}
-
-</div>
-
-`;
-
-}
-
-html+=`
-
-<button onclick="renderHome()">
-
-ホームへ戻る
-
-</button>
-
-`;
-
-screen.innerHTML=html;
-
-}
-function renderMatchScreen(courts){
-
-    let html = "<h2>🏸 試合中</h2>";
-
-    courts.forEach((court,index)=>{
-
-        html += `
-        <div class="card">
-
-            <h3>コート ${String.fromCharCode(65+index)}</h3>
-
-            <div class="team">
-                ${court.a1.name}<br>
-                ${court.a2.name}
-            </div>
-
-            <div class="score-row">
-
-                <button onclick="changeScore(${index},1,-1)">－</button>
-
-                <span id="scoreA${index}">0</span>
-
-                <button onclick="changeScore(${index},1,1)">＋</button>
-
-            </div>
-
-            <hr>
-
-            <div class="team">
-                ${court.b1.name}<br>
-                ${court.b2.name}
-            </div>
-
-            <div class="score-row">
-
-                <button onclick="changeScore(${index},2,-1)">－</button>
-
-                <span id="scoreB${index}">0</span>
-
-                <button onclick="changeScore(${index},2,1)">＋</button>
-
-            </div>
-
-        </div>
-        `;
-
     });
 
-    html += `
-    <button onclick="finishMatches()">
-        試合終了
-    </button>
-    `;
-
-    screen.innerHTML = html;
-
 }
-let currentCourts = [];
 
-function changeScore(courtIndex, team, delta){
+function addPlayer(){
 
-    const court = currentCourts[courtIndex];
+    const name = $("playerName").value.trim();
 
-    if(team === 1){
-        court.scoreA = Math.max(0, (court.scoreA || 0) + delta);
-        document.getElementById("scoreA"+courtIndex).innerText = court.scoreA;
-    }else{
-        court.scoreB = Math.max(0, (court.scoreB || 0) + delta);
-        document.getElementById("scoreB"+courtIndex).innerText = court.scoreB;
+    if(name===""){
+
+        alert("名前を入力してください");
+
+        return;
+
     }
 
-}
+    players.push({
 
-function finishMatches(){
+        id:uid(),
 
-    currentCourts.forEach(court=>{
+        name:name,
 
-        const teamA = court.scoreA || 0;
-        const teamB = court.scoreB || 0;
+        rate:Number($("playerRate").value),
 
-        if(teamA === teamB) return;
+        present:true,
 
-        const rateA = (court.a1.rate + court.a2.rate)/2;
-        const rateB = (court.b1.rate + court.b2.rate)/2;
+        played:0,
 
-        const expectedA = 1/(1+Math.pow(10,(rateB-rateA)/400));
-        const expectedB = 1-expectedA;
+        win:0,
 
-        const actualA = teamA>teamB ? 1 : 0;
-        const actualB = 1-actualA;
+        lose:0,
 
-        const K = 32;
+        rest:0,
 
-        const changeA = Math.round(K*(actualA-expectedA));
-        const changeB = Math.round(K*(actualB-expectedB));
+        pairHistory:{},
 
-        court.a1.rate += changeA;
-        court.a2.rate += changeA;
-        court.b1.rate += changeB;
-        court.b2.rate += changeB;
-
-        court.a1.played++;
-        court.a2.played++;
-        court.b1.played++;
-        court.b2.played++;
-
-        if(actualA){
-
-            court.a1.win++;
-            court.a2.win++;
-
-            court.b1.lose++;
-            court.b2.lose++;
-
-        }else{
-
-            court.b1.win++;
-            court.b2.win++;
-
-            court.a1.lose++;
-            court.a2.lose++;
-
-        }
+        enemyHistory:{}
 
     });
 
     savePlayers();
 
-    alert("試合結果を保存しました！");
-
     renderHome();
 
 }
 
+function togglePresent(index){
+
+    players[index].present=!players[index].present;
+
+    savePlayers();
+
+}
+// =======================================
+// MatchAce v2.0
+// app.js Part2
+// =======================================
+
 function editPlayer(index){
 
-    const player = players[index];
-
-    const newName = prompt("名前を変更", player.name);
+    const newName = prompt(
+        "プレイヤー名を変更",
+        players[index].name
+    );
 
     if(newName===null) return;
 
     if(newName.trim()==="") return;
 
-    player.name = newName.trim();
+    players[index].name=newName.trim();
 
     savePlayers();
 
@@ -422,3 +250,325 @@ function deletePlayer(index){
 
 }
 
+function startMatchMaking(){
+
+    const active=players.filter(p=>p.present);
+
+    const courtCount=parseInt($("courtCount").value);
+
+    if(active.length<courtCount*4){
+
+        alert(
+            `${courtCount}面には${courtCount*4}人必要です`
+        );
+
+        return;
+
+    }
+
+    const result=createMatches(players,courtCount);
+
+    currentMatches=result.courts;
+
+    renderMatchScreen();
+
+}
+
+function renderMatchScreen(){
+
+    currentScreen="match";
+
+    let html="";
+
+    currentMatches.forEach((court,index)=>{
+
+        html+=`
+
+<div class="card">
+
+<h2>
+
+🏸 コート ${String.fromCharCode(65+index)}
+
+</h2>
+
+<div class="player-name">
+
+${court.a1.name}
+
+<br>
+
+${court.a2.name}
+
+</div>
+
+<div style="text-align:center;
+font-size:26px;
+margin:15px 0;
+font-weight:bold;">
+
+VS
+
+</div>
+
+<div class="player-name">
+
+${court.b1.name}
+
+<br>
+
+${court.b2.name}
+
+</div>
+
+<br>
+
+<div style="display:flex;
+justify-content:space-around;
+align-items:center;">
+
+<button
+onclick="changeScore(${index},1,-1)">
+
+−
+
+</button>
+
+<div
+id="scoreA${index}"
+style="font-size:28px;">
+
+0
+
+</div>
+
+<button
+onclick="changeScore(${index},1,1)">
+
+＋
+
+</button>
+
+</div>
+
+<br>
+
+<div style="display:flex;
+justify-content:space-around;
+align-items:center;">
+
+<button
+onclick="changeScore(${index},2,-1)">
+
+−
+
+</button>
+
+<div
+id="scoreB${index}"
+style="font-size:28px;">
+
+0
+
+</div>
+
+<button
+onclick="changeScore(${index},2,1)">
+
+＋
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+    });
+
+    html+=`
+
+<button
+class="primary"
+onclick="finishMatches()">
+
+試合終了
+
+</button>
+
+<button
+class="primary"
+onclick="renderHome()">
+
+ホームへ戻る
+
+</button>
+
+`;
+
+    screen.innerHTML=html;
+
+}
+
+function changeScore(court,team,diff){
+
+    if(team===1){
+
+        currentMatches[court].scoreA=Math.max(
+            0,
+            (currentMatches[court].scoreA||0)+diff
+        );
+
+        $("scoreA"+court).innerText=
+        currentMatches[court].scoreA;
+
+    }else{
+
+        currentMatches[court].scoreB=Math.max(
+            0,
+            (currentMatches[court].scoreB||0)+diff
+        );
+
+        $("scoreB"+court).innerText=
+        currentMatches[court].scoreB;
+
+    }
+
+}
+// =======================================
+// MatchAce v2.0
+// app.js Part3
+// =======================================
+
+function finishMatches(){
+
+    currentMatches.forEach(court=>{
+
+        const scoreA = court.scoreA || 0;
+        const scoreB = court.scoreB || 0;
+
+        if(scoreA===scoreB) return;
+
+        const teamA=[court.a1,court.a2];
+        const teamB=[court.b1,court.b2];
+
+        const avgA=(teamA[0].rate+teamA[1].rate)/2;
+        const avgB=(teamB[0].rate+teamB[1].rate)/2;
+
+        const expectedA=1/(1+Math.pow(10,(avgB-avgA)/400));
+        const expectedB=1-expectedA;
+
+        const actualA=scoreA>scoreB?1:0;
+        const actualB=1-actualA;
+
+        const K=32;
+
+        const diffA=Math.round(K*(actualA-expectedA));
+        const diffB=Math.round(K*(actualB-expectedB));
+
+        teamA.forEach(player=>{
+
+            player.rate+=diffA;
+            player.played++;
+
+            if(actualA){
+                player.win++;
+            }else{
+                player.lose++;
+            }
+
+        });
+
+        teamB.forEach(player=>{
+
+            player.rate+=diffB;
+            player.played++;
+
+            if(actualB){
+                player.win++;
+            }else{
+                player.lose++;
+            }
+
+        });
+
+    });
+
+    savePlayers();
+
+    alert("試合結果を保存しました！");
+
+    renderHome();
+
+}
+
+function getRanking(){
+
+    return [...players].sort((a,b)=>b.rate-a.rate);
+
+}
+
+function renderRanking(){
+
+    const ranking=getRanking();
+
+    let html=`
+
+<div class="card">
+
+<h2>🏆 ランキング</h2>
+
+`;
+
+    ranking.forEach((p,index)=>{
+
+        html+=`
+
+<div class="player">
+
+<div>
+
+${index+1}位
+
+<b>${p.name}</b>
+
+</div>
+
+<div>
+
+⭐ ${Math.round(p.rate)}
+
+</div>
+
+</div>
+
+`;
+
+    });
+
+    html+=`
+
+</div>
+
+<button
+class="primary"
+onclick="renderHome()">
+
+戻る
+
+</button>
+
+`;
+
+    screen.innerHTML=html;
+
+}
+
+document
+.getElementById("tabHome")
+.onclick=renderHome;
+
+document
+.getElementById("tabRank")
+.onclick=renderRanking;
