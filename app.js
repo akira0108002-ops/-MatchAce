@@ -160,25 +160,15 @@ savePlayers();
 
 function goMatch(){
 
-const courtCount=parseInt(document.getElementById("courtCount").value);
+    const courtCount = parseInt(
+        document.getElementById("courtCount").value
+    );
 
-const result=createMatches(players,courtCount);
+    const result = createMatches(players, courtCount);
 
-console.log(result);
+    currentCourts = result.courts;
 
-alert(
-
-result.courts.length+
-
-"コート作成\n待機 "
-
-+
-
-result.wait.length+
-
-"人"
-
-);
+    renderMatchScreen(currentCourts);
 
 }
 
@@ -307,5 +297,26 @@ function renderMatchScreen(courts){
     `;
 
     screen.innerHTML = html;
+
+}
+let currentCourts = [];
+
+function changeScore(courtIndex, team, delta){
+
+    const court = currentCourts[courtIndex];
+
+    if(team === 1){
+        court.scoreA = Math.max(0, (court.scoreA || 0) + delta);
+        document.getElementById("scoreA"+courtIndex).innerText = court.scoreA;
+    }else{
+        court.scoreB = Math.max(0, (court.scoreB || 0) + delta);
+        document.getElementById("scoreB"+courtIndex).innerText = court.scoreB;
+    }
+
+}
+
+function finishMatches(){
+
+    alert("次回、レート計算と履歴保存を実装します。");
 
 }
