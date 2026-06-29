@@ -648,3 +648,4 @@ function updateHistory(teamA,teamB){
 
 }
 
+
