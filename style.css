@@ -184,3 +184,191 @@ transform:translateY(0);
 }
 
 }
+
+/* ==========================
+   MatchAce iPhone UI
+========================== */
+
+body{
+    margin:0;
+    padding:0;
+    background:#eef2f7;
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;
+    color:#111;
+}
+
+.topbar{
+    position:sticky;
+    top:0;
+    z-index:100;
+    padding:18px;
+    padding-top:55px;
+    text-align:center;
+    color:white;
+    background:linear-gradient(135deg,#007AFF,#0051D5);
+    box-shadow:0 4px 15px rgba(0,0,0,.2);
+}
+
+.logo{
+    font-size:30px;
+    font-weight:700;
+}
+
+.subtitle{
+    margin-top:6px;
+    font-size:14px;
+    opacity:.8;
+}
+
+#screen{
+    padding:18px;
+    padding-bottom:100px;
+}
+
+.card{
+
+    background:white;
+
+    border-radius:22px;
+
+    padding:18px;
+
+    margin-bottom:18px;
+
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+
+}
+
+.card h2{
+
+    margin-top:0;
+
+    font-size:22px;
+
+}
+
+input,select{
+
+    width:100%;
+
+    padding:15px;
+
+    margin-top:10px;
+
+    border:none;
+
+    border-radius:15px;
+
+    background:#f3f5f8;
+
+    font-size:17px;
+
+    box-sizing:border-box;
+
+}
+
+button{
+
+    border:none;
+
+    border-radius:16px;
+
+    background:#007AFF;
+
+    color:white;
+
+    padding:15px;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+button:active{
+
+    transform:scale(.97);
+
+}
+
+.primary{
+
+    width:100%;
+
+    margin-top:15px;
+
+}
+
+.player{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:14px 0;
+
+    border-bottom:1px solid #eee;
+
+}
+
+.player:last-child{
+
+    border-bottom:none;
+
+}
+
+.player-name{
+
+    font-size:18px;
+
+    font-weight:600;
+
+}
+
+.player-rate{
+
+    color:#007AFF;
+
+    font-size:14px;
+
+}
+
+.tabbar{
+
+    position:fixed;
+
+    bottom:0;
+
+    left:0;
+
+    right:0;
+
+    display:flex;
+
+    background:white;
+
+    border-top:1px solid #ddd;
+
+    height:82px;
+
+}
+
+.tabbar button{
+
+    flex:1;
+
+    border-radius:0;
+
+    background:white;
+
+    color:#444;
+
+    font-size:13px;
+
+}
