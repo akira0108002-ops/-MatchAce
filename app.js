@@ -478,6 +478,8 @@ function finishMatches(){
                 player.lose++;
             }
 
+            player.rest=0;
+
         });
 
         teamB.forEach(player=>{
@@ -491,13 +493,34 @@ function finishMatches(){
                 player.lose++;
             }
 
+            player.rest=0;
+
         });
+
+        updateHistory(teamA,teamB);
+
+    });
+
+    players.forEach(player=>{
+
+        const played=currentMatches.some(c=>
+            c.a1.id===player.id||
+            c.a2.id===player.id||
+            c.b1.id===player.id||
+            c.b2.id===player.id
+        );
+
+        if(!played){
+
+            player.rest=(player.rest||0)+1;
+
+        }
 
     });
 
     savePlayers();
 
-    alert("試合結果を保存しました！");
+    alert("試合結果を保存しました");
 
     renderHome();
 
@@ -572,3 +595,54 @@ document
 document
 .getElementById("tabRank")
 .onclick=renderRanking;
+
+function updateHistory(teamA,teamB){
+
+    teamA.forEach(a=>{
+
+        if(!a.pairHistory) a.pairHistory={};
+        if(!a.enemyHistory) a.enemyHistory={};
+
+        teamA.forEach(b=>{
+
+            if(a.id!==b.id){
+
+                a.pairHistory[b.id]=(a.pairHistory[b.id]||0)+1;
+
+            }
+
+        });
+
+        teamB.forEach(e=>{
+
+            a.enemyHistory[e.id]=(a.enemyHistory[e.id]||0)+1;
+
+        });
+
+    });
+
+    teamB.forEach(a=>{
+
+        if(!a.pairHistory) a.pairHistory={};
+        if(!a.enemyHistory) a.enemyHistory={};
+
+        teamB.forEach(b=>{
+
+            if(a.id!==b.id){
+
+                a.pairHistory[b.id]=(a.pairHistory[b.id]||0)+1;
+
+            }
+
+        });
+
+        teamA.forEach(e=>{
+
+            a.enemyHistory[e.id]=(a.enemyHistory[e.id]||0)+1;
+
+        });
+
+    });
+
+}
+
