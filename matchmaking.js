@@ -1,40 +1,71 @@
-// MatchAce AI MatchMaking v1
+// =====================================
+// MatchAce AI MatchMaking v2
+// =====================================
 
 function shuffle(array){
 
-    for(let i=array.length-1;i>0;i--){
+    const copy=[...array];
+
+    for(let i=copy.length-1;i>0;i--){
 
         const j=Math.floor(Math.random()*(i+1));
 
-        [array[i],array[j]]=[array[j],array[i]];
+　　　　　[copy[i],copy[j]] = [copy[j], copy[i]];
 
     }
 
-    return array;
+    return copy;
 
 }
 
-function average(pair){
+function average(team){
 
-    return (pair[0].rate+pair[1].rate)/2;
-
-}
-
-function evaluateMatch(court){
-
-    const a=average([court.a1,court.a2]);
-
-    const b=average([court.b1,court.b2]);
-
-    return Math.abs(a-b);
+    return (team[0].rate+team[1].rate)/2;
 
 }
 
-function createMatches(players,courtCount){
+function scoreCourt(court){
 
-    let active=players.filter(p=>p.present);
+    const teamA=[court.a1,court.a2];
+    const teamB=[court.b1,court.b2];
 
-    shuffle(active);
+    const rateDiff=Math.abs(
+        average(teamA)-average(teamB)
+    );
+
+    let score=rateDiff;
+
+    score+=pairPenalty(court.a1,court.a2);
+    score+=pairPenalty(court.b1,court.b2);
+
+    score+=enemyPenalty(teamA,teamB);
+
+    score+=restPenalty(court.a1);
+    score+=restPenalty(court.a2);
+    score+=restPenalty(court.b1);
+    score+=restPenalty(court.b2);
+
+    return score;
+
+}
+
+function scorePattern(courts){
+
+    let total=0;
+
+    courts.forEach(c=>{
+
+        total+=scoreCourt(c);
+
+    });
+
+    return total;
+
+}
+
+function createPattern(players,courtCount){
+
+    let active=shuffle(players.filter(p=>p.present));
 
     active.sort((a,b)=>b.rate-a.rate);
 
@@ -68,8 +99,75 @@ function createMatches(players,courtCount){
 
         courts,
 
-        wait
+        wait,
+
+        score:scorePattern(courts)
 
     };
 
 }
+
+function createMatches(players,courtCount){
+
+    let best=null;
+
+    for(let i=0;i<300;i++){
+
+        const pattern=createPattern(players,courtCount);
+
+        if(best===null || pattern.score<best.score){
+
+            best=pattern;
+
+        }
+
+    }
+
+    return best;
+
+}
+
+// =====================================
+// AI Penalty System
+// =====================================
+
+function pairPenalty(p1,p2){
+
+    if(!p1.pairHistory) p1.pairHistory={};
+    if(!p2.pairHistory) p2.pairHistory={};
+
+    let penalty=0;
+
+    penalty += (p1.pairHistory[p2.id]||0)*120;
+    penalty += (p2.pairHistory[p1.id]||0)*120;
+
+    return penalty;
+
+}
+
+function enemyPenalty(teamA,teamB){
+
+    let penalty=0;
+
+    teamA.forEach(a=>{
+
+        if(!a.enemyHistory) a.enemyHistory={};
+
+        teamB.forEach(b=>{
+
+            penalty += (a.enemyHistory[b.id]||0)*60;
+
+        });
+
+    });
+
+    return penalty;
+
+}
+
+function restPenalty(player){
+
+    return -(player.rest||0)*80;
+
+}
+
