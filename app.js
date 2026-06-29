@@ -1,139 +1,166 @@
-// MatchAce v1.0
+const STORAGE_KEY = "matchace_players";
+
+let players = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+function savePlayers(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(players));
+}
 
 const screen = document.getElementById("screen");
 
-let players = JSON.parse(localStorage.getItem("matchace_players")) || [];
-
-function savePlayers(){
-    localStorage.setItem("matchace_players", JSON.stringify(players));
-}
-
 function renderHome(){
 
-    screen.innerHTML = `
-        <div class="card">
+screen.innerHTML=`
 
-            <h2>プレイヤー管理</h2>
+<div class="card glass fade">
 
-            <input id="playerName" placeholder="プレイヤー名">
+<h2>👥 プレイヤー登録</h2>
 
-            <select id="playerExp">
-                <option value="1500">経験者（1500）</option>
-                <option value="1000">初心者（1000）</option>
-            </select>
+<input id="name" placeholder="名前">
 
-            <button onclick="addPlayer()">
-                プレイヤー追加
-            </button>
+<select id="exp">
 
-        </div>
+<option value="1500">🏸経験者</option>
 
-        <div class="card">
+<option value="1000">🔰初心者</option>
 
-            <h2>登録メンバー</h2>
+</select>
 
-            <div id="playerList"></div>
+<button onclick="addPlayer()">
 
-        </div>
-    `;
+追加
 
-    drawPlayers();
+</button>
+
+</div>
+
+<div class="card glass fade">
+
+<h2>📋 本日の参加者</h2>
+
+<div id="playerList"></div>
+
+</div>
+
+<div class="card glass fade">
+
+<h2>🏸 コート数</h2>
+
+<input id="courtCount" type="number" value="1" min="1" max="10">
+
+<button onclick="goMatch()">
+
+マッチメイク開始
+
+</button>
+
+</div>
+
+`;
+
+drawPlayers();
 
 }
 
 function addPlayer(){
 
-    const name=document.getElementById("playerName").value.trim();
+const name=document.getElementById("name").value.trim();
 
-    const rate=parseInt(document.getElementById("playerExp").value);
+const rate=parseInt(document.getElementById("exp").value);
 
-    if(name===""){
-        alert("名前を入力してください");
-        return;
-    }
+if(name===""){
 
-    players.push({
+alert("名前を入力してください");
 
-        id:Date.now(),
+return;
 
-        name,
+}
 
-        rate,
+players.push({
 
-        played:0,
+id:Date.now(),
 
-        win:0,
+name,
 
-        lose:0
+rate,
 
-    });
+present:true,
 
-    savePlayers();
+played:0,
 
-    renderHome();
+win:0,
+
+lose:0,
+
+rest:0
+
+});
+
+savePlayers();
+
+renderHome();
 
 }
 
 function drawPlayers(){
 
-    const list=document.getElementById("playerList");
+const list=document.getElementById("playerList");
 
-    if(players.length===0){
+list.innerHTML="";
 
-        list.innerHTML="<p>まだ登録されていません</p>";
+players.forEach((p,index)=>{
 
-        return;
+list.innerHTML+=`
 
-    }
+<div class="player-card">
 
-    list.innerHTML="";
+<div>
 
-    players.forEach(p=>{
+<b>${p.name}</b><br>
 
-        list.innerHTML+=`
+⭐ ${Math.round(p.rate)}
 
-        <div style="
-        display:flex;
-        justify-content:space-between;
-        padding:12px;
-        border-bottom:1px solid #eee;
-        ">
+</div>
 
-            <div>
+<div>
 
-                <strong>${p.name}</strong><br>
+<label>
 
-                ⭐ ${p.rate}
+<input
 
-            </div>
+type="checkbox"
 
-            <button
-            style="
-            width:80px;
-            "
-            onclick="deletePlayer(${p.id})">
+${p.present?"checked":""}
 
-            削除
+onchange="togglePresent(${index})"
 
-            </button>
+>
 
-        </div>
+参加
 
-        `;
+</label>
 
-    });
+</div>
+
+</div>
+
+`;
+
+});
 
 }
 
-function deletePlayer(id){
+function togglePresent(i){
 
-    if(!confirm("削除しますか？")) return;
+players[i].present=!players[i].present;
 
-    players=players.filter(p=>p.id!==id);
+savePlayers();
 
-    savePlayers();
+}
 
-    renderHome();
+function goMatch(){
+
+alert("次回ここにAIマッチメイクを追加します");
 
 }
 
