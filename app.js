@@ -321,32 +321,36 @@ function finishMatches(){
 
     currentCourts.forEach(court=>{
 
-        const teamA=(court.scoreA||0);
-        const teamB=(court.scoreB||0);
+        const teamA = court.scoreA || 0;
+        const teamB = court.scoreB || 0;
 
-        if(teamA===teamB) return;
+        if(teamA === teamB) return;
 
-        const rateA=(court.a1.rate+court.a2.rate)/2;
-        const rateB=(court.b1.rate+court.b2.rate)/2;
+        const rateA = (court.a1.rate + court.a2.rate)/2;
+        const rateB = (court.b1.rate + court.b2.rate)/2;
 
-        const expectA=1/(1+Math.pow(10,(rateB-rateA)/400));
-        const expectB=1-expectA;
+        const expectedA = 1/(1+Math.pow(10,(rateB-rateA)/400));
+        const expectedB = 1-expectedA;
 
-        const scoreA=teamA>teamB?1:0;
-        const scoreB=1-scoreA;
+        const actualA = teamA>teamB ? 1 : 0;
+        const actualB = 1-actualA;
 
-        const K=32;
+        const K = 32;
 
-        const changeA=Math.round(K*(scoreA-expectA));
-        const changeB=Math.round(K*(scoreB-expectB));
+        const changeA = Math.round(K*(actualA-expectedA));
+        const changeB = Math.round(K*(actualB-expectedB));
 
-        court.a1.rate+=changeA;
-        court.a2.rate+=changeA;
+        court.a1.rate += changeA;
+        court.a2.rate += changeA;
+        court.b1.rate += changeB;
+        court.b2.rate += changeB;
 
-        court.b1.rate+=changeB;
-        court.b2.rate+=changeB;
+        court.a1.played++;
+        court.a2.played++;
+        court.b1.played++;
+        court.b2.played++;
 
-        if(scoreA){
+        if(actualA){
 
             court.a1.win++;
             court.a2.win++;
@@ -364,7 +368,12 @@ function finishMatches(){
 
         }
 
-        court.a1.played
-let currentCourts = [];
-function changeScore(...)
-function finishMatches(...)
+    });
+
+    savePlayers();
+
+    alert("試合結果を保存しました！");
+
+    renderHome();
+
+}
