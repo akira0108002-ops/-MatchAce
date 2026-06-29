@@ -119,6 +119,8 @@ list.innerHTML+=`
 <b>${p.name}</b><br>
 
 ⭐ ${Math.round(p.rate)}
+<br>
+🏆 ${p.win}勝 ${p.lose}敗
 
 </div>
 
