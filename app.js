@@ -99,6 +99,15 @@ AIマッチメイク
 
 </button>
 
+<button
+
+class="primary"
+
+onclick="lockPair()">
+
+🔒 ペア固定
+
+</button>
 </div>
 
 `;
