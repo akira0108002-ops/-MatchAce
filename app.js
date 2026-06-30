@@ -395,7 +395,25 @@ onclick="changeScore(${index},2,1)">
 `;
 
     });
+if(waitingPlayers.length){
 
+    html += `
+
+<div class="card">
+
+<h2>🪑 待機メンバー</h2>
+
+${waitingPlayers.map(p=>`
+<div class="player">
+    <div class="player-name">${p.name}</div>
+</div>
+`).join("")}
+
+</div>
+
+`;
+
+}
     html+=`
 
 <button
