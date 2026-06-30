@@ -532,7 +532,9 @@ function getRanking(){
 
 function renderRanking(){
 
-    const ranking=getRanking();
+    currentScreen="ranking";
+
+    const ranking=[...players].sort((a,b)=>b.rate-a.rate);
 
     let html=`
 
@@ -542,23 +544,33 @@ function renderRanking(){
 
 `;
 
-    ranking.forEach((p,index)=>{
+    ranking.forEach((player,index)=>{
 
-        html+=`
+        const winRate = player.played
+            ? Math.round(player.win/player.played*100)
+            : 0;
+
+        html += `
 
 <div class="player">
 
 <div>
 
-${index+1}位
+<div class="player-name">
 
-<b>${p.name}</b>
+${index+1}位　${player.name}
 
 </div>
 
-<div>
+<div class="player-rate">
 
-⭐ ${Math.round(p.rate)}
+🏸 ${player.played}試合<br>
+
+🏆 ${player.win}勝 ${player.lose}敗<br>
+
+📊 勝率 ${winRate}%
+
+</div>
 
 </div>
 
@@ -568,7 +580,7 @@ ${index+1}位
 
     });
 
-    html+=`
+    html += `
 
 </div>
 
@@ -576,13 +588,13 @@ ${index+1}位
 class="primary"
 onclick="renderHome()">
 
-戻る
+ホームへ戻る
 
 </button>
 
 `;
 
-    screen.innerHTML=html;
+    screen.innerHTML = html;
 
 }
 
