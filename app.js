@@ -130,7 +130,7 @@ ${player.name}
 
 <div class="player-rate">
 
-　
+🏸 ${player.played}試合
 
 🏆 ${player.win}
 
