@@ -130,17 +130,15 @@ ${player.name}
 
 <div class="player-rate">
 
-🏸 ${player.played}試合
+🏸 ${player.played}試合<br>
 
-🏆 ${player.win}
+🏆 ${player.win}勝　❌ ${player.lose}敗<br>
 
-勝
-
-　
-
-❌ ${player.lose}
-
-敗
+📊 勝率 ${
+    player.played
+        ? Math.round((player.win / player.played) * 100)
+        : 0
+}%
 
 </div>
 
