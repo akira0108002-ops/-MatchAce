@@ -277,7 +277,18 @@ function renderMatchScreen(){
     currentScreen="match";
 
     let html="";
+const waitingPlayers = players.filter(player => {
 
+    return player.present && !currentMatches.some(court =>
+
+        court.a1.id===player.id ||
+        court.a2.id===player.id ||
+        court.b1.id===player.id ||
+        court.b2.id===player.id
+
+    );
+
+});
     currentMatches.forEach((court,index)=>{
 
         html+=`
