@@ -111,7 +111,7 @@ function createMatches(players,courtCount){
 
     let best=null;
 
-    for(let i=0;i<300;i++){
+    for(let i=0;i<1000;i++){
 
         const pattern=createPattern(players,courtCount);
 
