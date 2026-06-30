@@ -130,8 +130,6 @@ ${player.name}
 
 <div class="player-rate">
 
-⭐ ${Math.round(player.rate)}
-
 　
 
 🏆 ${player.win}
