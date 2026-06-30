@@ -7,6 +7,7 @@ const STORAGE_KEY = "matchace_players_v2";
 
 let players = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 let currentMatches = [];
+let lockedPairs = [];
 let currentScreen = "home";
 
 function savePlayers() {
@@ -686,3 +687,30 @@ function updateHistory(teamA,teamB){
 }
 
 
+function lockPair(){
+
+    const name1 = prompt("1人目の名前");
+
+    if(name1===null) return;
+
+    const name2 = prompt("2人目の名前");
+
+    if(name2===null) return;
+
+    const p1 = players.find(p=>p.name===name1);
+
+    const p2 = players.find(p=>p.name===name2);
+
+    if(!p1 || !p2){
+
+        alert("名前が見つかりません");
+
+        return;
+
+    }
+
+    lockedPairs.push([p1.id,p2.id]);
+
+    alert("固定ペアを登録しました");
+
+}
